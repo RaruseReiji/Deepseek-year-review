@@ -21,7 +21,8 @@ from wordcloud import WordCloud
 import platform
 import sys
 import traceback
-
+from pathlib import Path
+import markdown
 
 # ================= 配置区域 =================
 JSON_FILE_PATH = r'conversations.json'  # 你的导出的JSON文件路径
@@ -437,7 +438,7 @@ def analyze_part_one(data):
 
 # ================= 第二部分：API 总结 =================
 
-def call_deepseek_api(messages, model = "deepseek-chat", max_tokens = 8192):
+def call_deepseek_api(messages, model = "deepseek-chat", max_tokens = 8192, timeout = 90):
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {API_KEY}'
@@ -450,7 +451,7 @@ def call_deepseek_api(messages, model = "deepseek-chat", max_tokens = 8192):
     }
     
     try:
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=180) # 增加超时时间
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=timeout) # 增加超时时间
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
@@ -568,6 +569,106 @@ def analyze_part_two(data, max_workers=20):
         json.dump(results, f, ensure_ascii=False, indent=2)
     
     return results
+
+def md_to_html(
+    md_path,
+    html_path,
+    title="DeepSeek 年度总结"
+):
+    """
+    Markdown 转 HTML（图片自适应宽度）
+    依赖：
+        pip install markdown
+    """
+    md_path = Path(md_path)
+    html_path = Path(html_path)
+
+    md_text = md_path.read_text(encoding="utf-8")
+
+    html_body = markdown.markdown(
+        md_text,
+        extensions=[
+            "extra",
+            "toc",
+            "sane_lists",
+            "smarty"
+        ]
+    )
+
+    html = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>{title}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ===== 基础排版 ===== */
+body {{
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 16px;
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    color: #222;
+    background: #fff;
+}}
+
+h1, h2, h3 {{
+    margin-top: 1.6em;
+}}
+
+p {{
+    margin: 0.8em 0;
+}}
+
+/* ===== 关键：图片自适应 ===== */
+img {{
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.2em auto;
+}}
+
+/* ===== 表格优化 ===== */
+table {{
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}}
+
+th, td {{
+    border: 1px solid #ddd;
+    padding: 8px;
+}}
+
+th {{
+    background: #f5f5f5;
+}}
+
+/* ===== 代码块 ===== */
+pre {{
+    background: #f6f8fa;
+    padding: 12px;
+    overflow-x: auto;
+}}
+
+code {{
+    font-family: Consolas, monospace;
+}}
+</style>
+
+</head>
+<body>
+{html_body}
+</body>
+</html>
+"""
+
+    html_path.write_text(html, encoding="utf-8")
+    print(f"HTML 已生成（图片自适应）: {html_path}")
 
 # ================= 第三部分：生成最终报告 =================
 
@@ -696,7 +797,7 @@ def generate_final_report(stats, summary_results):
     
     print(">>> 正在调用大模型API生成年度报告，用时较长，预计2分钟，请耐心等待……")
 
-    report_content = call_deepseek_api(messages, "deepseek-reasoner", 12800)
+    report_content = call_deepseek_api(messages, "deepseek-reasoner", 12800, 300)
     
     if report_content:
         with open(os.path.join(OUTPUT_DIR, "2025_AI_Annual_Report.md"), "w", encoding="utf-8") as f:
@@ -922,6 +1023,8 @@ def build_report(
 
     with open(report_file_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+
+    md_to_html(report_file_path, os.path.join(OUTPUT_DIR, "report.html"))
 
     print(f"最终报告已生成: {report_file_path}")
     
