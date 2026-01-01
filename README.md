@@ -2,7 +2,7 @@
 
 > 本工具是面向AI编程的，用于对 **DeepSeek 官网导出的聊天记录 JSON 文件**进行统计分析，并生成 **Markdown（`.md`）格式的年度报告**，适合普通用户直接使用，也支持有一定计算机基础的用户自行搭建运行环境。
 
-## 快速开始（TL;DR）
+## 快速开始
 
 👉 Windows 用户可直接前往
 [GitHub Release 页面](https://github.com/RaruseReiji/Deepseek-year-review/releases/latest)
@@ -214,3 +214,4 @@ python main.py
 
 This project is licensed under the MIT License.
 You are free to use, modify, and distribute this software, including for commercial purposes, as long as you include the original copyright notice.
+
