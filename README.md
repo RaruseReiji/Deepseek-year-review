@@ -1,6 +1,6 @@
 # DeepSeek 年度总结 使用说明
 
-> 本工具是面向AI编程的，用于对 **DeepSeek 官网导出的聊天记录 JSON 文件**进行统计分析，并生成 **Markdown（`.md`）格式的年度报告**，适合普通用户直接使用，也支持有一定计算机基础的用户自行搭建运行环境。
+本工具是面向AI编程的，用于对 **DeepSeek 官网导出的聊天记录 JSON 文件**进行统计分析，并 **由DeepSeek据此为你撰写一篇年度总结** ，最后生成 **Markdown（`.md`）格式的年度报告**，适合普通用户直接使用，也支持有一定计算机基础的用户自行搭建运行环境。
 
 ## 快速开始
 
@@ -214,4 +214,3 @@ python main.py
 
 This project is licensed under the MIT License.
 You are free to use, modify, and distribute this software, including for commercial purposes, as long as you include the original copyright notice.
-
