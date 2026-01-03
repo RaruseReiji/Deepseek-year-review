@@ -214,7 +214,7 @@ python main.py
 
 ## 八、更新日志
 
-* 2026-01-02 V.1.1.0 实现主要功能。可改进问题：对话数过多时，第四部分撰写年度总结时可能超deepseek上下文上限（128K）。具体试验下来，802条对话，197816字符，对应115702 token，比较极限。可以考虑根据对话数量动态调整第三阶段单个总结时的字数上限，或者对话很多时做成抽样。可以在此基础上做一个字符数截断保险，以防AI忘记提示词而出现不可控行为。
+* 2026-01-02 V.1.1.0 实现主要功能。
 
 * 2026-01-02 V.1.1.1 增加error日志，方便可能的排查。
 
@@ -222,7 +222,17 @@ python main.py
 
 ---
 
+## 九、待改进点
+
+* 对话数过多时，第四部分撰写年度总结时可能超deepseek上下文上限（128K）。具体试验下来，802条对话，197816字符，对应115702 token，比较极限。可以考虑根据对话数量动态调整第三阶段单个总结时的字数上限，或者对话很多时做成抽样。可以在此基础上做一个字符数截断保险，以防AI忘记提示词而出现不可控行为。可以考虑在首次生成后依据返回的数据包中的token数来判断一下有没有超，超了就执行一次重新生成。
+
+* API合法性、服务器通畅性最好是提前判定一下。
+
+* 也许可以考虑增加一下不调用API的模式，仅做统计分析。
+
+---
+
 ## License
 
 This project is licensed under the MIT License.
-You are free to use, modify, and distribute this software, including for commercial purposes, as long as you include the original copyright notice.
+You are free to use, modify, and distribute this software, as long as you include the original copyright notice.
